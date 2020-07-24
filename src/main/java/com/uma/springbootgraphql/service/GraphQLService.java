@@ -23,17 +23,14 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
 
 @Service
-
 public class GraphQLService {
-
+	
 	private static Logger logger = LoggerFactory.getLogger(GraphQLService.class);
 	private GraphQL graphQL;
-
-	@Value("classpath:emploies.graphql")
+	@Value("classpath:employee.graphql")
 	Resource resource;
 
 	private AllEmployeeDataFetcher allEmployeeDataFetcher;
-
 	private EmployeeDataFetcher employeeDataFetcher;
 
 	@Autowired
@@ -42,27 +39,24 @@ public class GraphQLService {
 		this.allEmployeeDataFetcher = allEmployeeDataFetcher;
 		this.employeeDataFetcher = employeeDataFetcher;
 	}
-	
-	  @PostConstruct
-	    private void loadGraphQlFile() throws IOException {
-	        logger.info("Entering loadGraphQlFile");
-	     
-	        //Get the graphql file
-	        File file = resource.getFile();
-	        //Parse SchemaF
-	        TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(file);
-	        RuntimeWiring runtimeWiring = buildRuntimeWiring();
-	        GraphQLSchema graphQLSchema = new SchemaGenerator().makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
-	        graphQL = GraphQL.newGraphQL(graphQLSchema).build();
-	    }
-	    private RuntimeWiring buildRuntimeWiring() {
-	        return RuntimeWiring.newRuntimeWiring()
-	                .type("Query", typeWiring -> typeWiring
-	                .dataFetcher("allEmployees", allEmployeeDataFetcher)
-	                .dataFetcher("employee", employeeDataFetcher)).
-	                 build();
-	    }
-	    public GraphQL getGraphQL(){
-	        return graphQL;
-	    }
+
+	@PostConstruct
+	private void loadGraphQlFile() throws IOException {
+		logger.info(">>>>>>>>>>>>>Entering loadGraphQlFile()>>>>>>>>>>>>>>>");
+		File file = resource.getFile();
+		TypeDefinitionRegistry typeDefinitionRegistry = new SchemaParser().parse(file);
+		RuntimeWiring runtimeWiring = buildRuntimeWiring();
+		GraphQLSchema graphQLSchema = new SchemaGenerator().makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
+		graphQL = GraphQL.newGraphQL(graphQLSchema).build();
+	}
+
+	private RuntimeWiring buildRuntimeWiring() {
+		return RuntimeWiring.newRuntimeWiring().type("Query", typeWiring -> typeWiring
+				.dataFetcher("allEmployees", allEmployeeDataFetcher).dataFetcher("employee", employeeDataFetcher))
+				.build();
+	}
+
+	public GraphQL getGraphQL() {
+		return graphQL;
+	}
 }

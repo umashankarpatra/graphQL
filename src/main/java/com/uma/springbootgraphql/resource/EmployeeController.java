@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,7 @@ import com.uma.springbootgraphql.service.GraphQLService;
 import graphql.ExecutionResult;
 
 @RestController
-@RequestMapping("api/v1/grapgQl")
+@RequestMapping("/graphQl")
 public class EmployeeController {
 
 	private static Logger logger = LoggerFactory.getLogger(EmployeeController.class);
@@ -28,17 +27,15 @@ public class EmployeeController {
 		this.graphQLService = graphQLService;
 	}
 
-	@GetMapping()
-	public String getEmployee() {
-		return "uma";
-
-	}
-
 	@PostMapping
 	public ResponseEntity<Object> getAllEmployee(@RequestBody String query) {
-		logger.info("Entering getAllEmployee");
+		logger.info(">>>>>>>>>>>Entering getAllEmployee()>>>>>>>>>>>>>>");
 		ExecutionResult execute = graphQLService.getGraphQL().execute(query);
 		return new ResponseEntity<>(execute, HttpStatus.OK);
 	}
 
 }
+
+
+
+
